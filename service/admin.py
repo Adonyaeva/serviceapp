@@ -1,13 +1,13 @@
 from django.contrib import admin
-from .models import Address
-from .models import TimeSlot
-from .models import Ticket
-from .models import Engineer
-from .models import Service
+from .models import address
+from .models import timeslot
+from .models import ticket
+from .models import engineer
+from .models import service
 
-admin.site.register(Address)
-admin.site.register(TimeSlot)
-admin.site.register(Ticket)
-admin.site.register(Engineer)
-admin.site.register(Service)
+admin.site.register(address)
+admin.site.register(timeslot)
+admin.site.register(ticket)
+admin.site.register(engineer)
+admin.site.register(service)
 

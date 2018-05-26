@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 
 
-class Address(models.Model):
+class address(models.Model):
     street_name = models.CharField(max_length=200)
     house_id = models.IntegerField()
     house_number = models.IntegerField()
@@ -14,7 +14,7 @@ class Address(models.Model):
         return self.street_name + self.house_number + self.flat_number
 
 
-class TimeSlot(models.Model):
+class timeslot(models.Model):
     from_begin = models.DateTimeField()
     to = models.DateTimeField()
     available = models.BooleanField()
@@ -24,34 +24,34 @@ class TimeSlot(models.Model):
         return self.from_begin + self.to
 
 
-class Ticket(models.Model):
+class ticket(models.Model):
     created_time = models.DateTimeField(default=timezone.now)
     comment = models.TextField()
-    address = models.ForeignKey('service.Address', on_delete=models.CASCADE)
-    service = models.ForeignKey('service.Service', on_delete=models.CASCADE)
+    address = models.ForeignKey('service.address', on_delete=models.CASCADE)
+    service = models.ForeignKey('service.service', on_delete=models.CASCADE)
     status_id = models.IntegerField()
     status_updated_time = models.DateTimeField()
-    time_slot = models.ForeignKey('service.TimeSlot', on_delete=models.DO_NOTHING)
+    time_slot = models.ForeignKey('service.timeslot', on_delete=models.DO_NOTHING)
     speciality = models.CharField(max_length=200)
-    engineer = models.ForeignKey('service.Engineer', on_delete=models.DO_NOTHING)
+    engineer = models.ForeignKey('service.engineer', on_delete=models.DO_NOTHING)
     spent_time = models.IntegerField()
 
     def __str__(self):
         return self.address + self.service + self.time_slot
 
 
-class Engineer(models.Model):
+class engineer(models.Model):
     name_full = models.CharField(max_length=400)
     name_short = models.CharField(max_length=100)
     speciality = models.CharField(max_length=200)
-    time_slots = models.ManyToManyField('service.TimeSlot')
+    time_slots = models.ManyToManyField('service.timeslot')
 
 
     def __str__(self):
         return self.name_full
 
 
-class Service(models.Model):
+class service(models.Model):
     name = models.CharField(max_length=400)
     description = models.TextField()
     estimate = models.IntegerField()
