@@ -15,8 +15,8 @@ class address(models.Model):
 
 
 class timeslot(models.Model):
-    from_begin = models.DateTimeField()
-    to = models.DateTimeField()
+    from_date = models.DateTimeField()
+    to_date = models.DateTimeField()
     available = models.BooleanField()
 
 
