@@ -18,6 +18,10 @@ from django.urls import path
 from django.conf.urls import url, include
 from rest_framework import routers
 from service import views
+from rest_framework import generics
+from service.serializers import ServiceSerializer
+from service.models import service
+
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
@@ -38,4 +42,6 @@ urlpatterns = [
     url(r'^api/token/$', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     url(r'^api/token/refresh/$', TokenRefreshView.as_view(), name='token_refresh'),
     url(r'^api/token/verify/$', TokenVerifyView.as_view(), name='token_verify'),
+    url(r'^api/services/$', generics.ListCreateAPIView.as_view(queryset=service.objects.all(),
+                                                           serializer_class=ServiceSerializer), name='service-list')
 ]

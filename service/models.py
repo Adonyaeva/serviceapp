@@ -55,7 +55,15 @@ class service(models.Model):
     name = models.CharField(max_length=400)
     description = models.TextField()
     estimate = models.IntegerField()
-    type = models.CharField(max_length=400)
+    type = models.ForeignKey('service.speciality', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
+
+class speciality(models.Model):
+    name = models.CharField(max_length=400)
+    description = models.TextField()
 
     def __str__(self):
         return self.name
