@@ -1,15 +1,17 @@
 from django.contrib import admin
-from .models import address
-from .models import timeslot
-from .models import ticket
-from .models import engineer
-from .models import service
-from .models import speciality
+from .models import (
+    Address,
+    TimeSlot,
+    Ticket,
+    Engineer,
+    Service,
+    Speciality
+)
 
-admin.site.register(address)
-admin.site.register(timeslot)
-admin.site.register(ticket)
-admin.site.register(engineer)
-admin.site.register(service)
-admin.site.register(speciality)
+admin.site.register(Address)
+admin.site.register(TimeSlot)
+admin.site.register(Ticket)
+admin.site.register(Engineer)
+admin.site.register(Service)
+admin.site.register(Speciality)
 

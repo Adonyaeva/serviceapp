@@ -39,9 +39,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^api/token/$', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    url(r'^api/token/refresh/$', TokenRefreshView.as_view(), name='token_refresh'),
-    url(r'^api/token/verify/$', TokenVerifyView.as_view(), name='token_verify'),
+    url(r'^api/login/$', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    url(r'^api/refresh/$', TokenRefreshView.as_view(), name='token_refresh'),
+    url(r'^api/verify/$', TokenVerifyView.as_view(), name='token_verify'),
     url(r'^api/services/$', generics.ListCreateAPIView.as_view(queryset=service.objects.all(),
                                                            serializer_class=ServiceSerializer), name='service-list')
 ]
