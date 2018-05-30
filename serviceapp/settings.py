@@ -132,3 +132,23 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': True,
 }
+
+API_ADDRESS_SERVER_SETTINGS = {
+    'URL_STREET': 'https://us-central1-test-br-181510.cloudfunctions.net/function-1/api/street',
+    'URL_HOUSE': 'https://us-central1-test-br-181510.cloudfunctions.net/function-1/api/house',
+    'URL_FLAT': 'https://us-central1-test-br-181510.cloudfunctions.net/function-1/api/flat',
+    'USERS': {
+        'USER1': {
+            'LOGIN': 'user1',
+            'PASSWORD': 'SDfgjajsdgf78'
+        },
+        'USER2': {
+            'LOGIN': 'user2',
+            'PASSWORD': 'HJiuga3f73834a'
+        },
+        'USER3': {
+            'LOGIN': 'user3',
+            'PASSWORD': 'hawbfuy3to837a3948r'
+        }
+    }
+}

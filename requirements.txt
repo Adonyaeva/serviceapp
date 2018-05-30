@@ -2,4 +2,5 @@ Django>=1.8
 psycopg2
 djangorestframework
 djangorestframework_simplejwt
+requests
 

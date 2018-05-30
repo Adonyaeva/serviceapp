@@ -11,7 +11,7 @@ class Address(models.Model):
 
 
     def __str__(self):
-        return self.street_name + self.house_number + self.flat_number
+        return self.street_name + '_' + self.house_number + '_' + self.flat_number
 
 
 class TimeSlot(models.Model):
@@ -21,7 +21,7 @@ class TimeSlot(models.Model):
 
 
     def __str__(self):
-        return self.from_date + self.to_date
+        return self.from_date + '_' + self.to_date
 
 
 class Ticket(models.Model):
@@ -37,7 +37,7 @@ class Ticket(models.Model):
     spent_time = models.IntegerField()
 
     def __str__(self):
-        return self.address + self.service + self.time_slot
+        return self.address + '_' + self.service + '_' + self.time_slot
 
 
 class Engineer(models.Model):
