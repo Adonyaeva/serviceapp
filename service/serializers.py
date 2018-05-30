@@ -1,7 +1,10 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
-from .models import Service
-from .models import Speciality
+from .models import (
+    Service,
+    Speciality,
+    Street
+)
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -29,3 +32,10 @@ class ServiceSerializer(serializers.HyperlinkedModelSerializer):
         model = Service
         depth = 1
         fields = ('name', 'description', 'estimate', 'type')
+
+
+class StreetListSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Street
+        depth = 1
+        fields = ('name', 'houses')

@@ -18,11 +18,6 @@ from django.urls import path
 from django.conf.urls import url, include
 from rest_framework import routers
 from service import views
-from service.views import (
-    get_street_list,
-    get_houses_list,
-    get_flats_list
-)
 from rest_framework import generics
 from service.serializers import ServiceSerializer
 from service.models import Service
@@ -49,7 +44,8 @@ urlpatterns = [
     url(r'^api/verify/$', TokenVerifyView.as_view(), name='token_verify'),
     url(r'^api/services/$', generics.ListCreateAPIView.as_view(queryset=Service.objects.all(),
                                                            serializer_class=ServiceSerializer), name='service-list'),
-    url(r'^api/street/$', get_street_list, name='get_street_list'),
-    url(r'^api/houses/$', get_houses_list, name='get_houses_list'),
-    url(r'^api/flats/$', get_flats_list, name='get_flats_list'),
+    url(r'^api/street/$', views.GetStreetListAPIView.as_view(), name='get_street_list'),
+    url(r'^api/houses/$', views.GetHousesListAPIView.as_view(), name='get_houses_list'),
+    url(r'^api/flats/$', views.GetFlatsListAPIView.as_view(), name='get_flats_list'),
+    url(r'^api/ticket/$', views.TicketAPIView.as_view(), name='get_ticket'),
 ]

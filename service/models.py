@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+import json
 
 
 class Address(models.Model):
@@ -68,3 +69,35 @@ class Speciality(models.Model):
     def __str__(self):
         return self.name
 
+
+class Street(models.Model):
+    name = models.CharField(max_length=400)
+    houses = models.CharField(max_length=400)
+
+    def set_houses(self, x):
+        self.houses = json.dumps(x)
+
+    def get_houses(self):
+        return json.loads(self.houses)
+
+    def __str__(self):
+        return self.name
+
+
+class House(models.Model):
+    number = models.IntegerField()
+    flats = models.CharField(max_length=400)
+
+    def set_flats(self, x):
+        self.flats = json.dumps(x)
+
+    def get_flats(self):
+        return json.loads(self.flats)
+
+    def __str__(self):
+        return self.number
+
+
+class Flat(models.Model):
+    number = models.IntegerField()
+    services = models.ManyToManyField('service.Service')
