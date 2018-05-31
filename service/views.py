@@ -27,6 +27,7 @@ from .models import (
     Service,
     Speciality
 )
+import json
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -91,13 +92,32 @@ class GetFlatsListAPIView(APIView):
         try:
             result = requests.get(url, auth=(API_ADDRESS_SERVER_SETTINGS['USERS']['USER1']['LOGIN'],
                                              API_ADDRESS_SERVER_SETTINGS['USERS']['USER1']['PASSWORD']))
-            data = result.content
+            flats = json.loads(result.content)
+            response_data = []
+            # Getting services to flats
+            for flat in flats:
+                try:
+                    flat_address = Address.objects.get(flat_id=flat['id'], house_id=flat['house'])
+                    flat_tickets = Ticket.objects.filter(address=flat_address)
+                    flat['services'] = []
+                    for flat_ticket in flat_tickets:
+                        flat_service = {
+                            'name': flat_ticket.service.name,
+                            'description': flat_ticket.service.description,
+                            'estimate': flat_ticket.service.estimate,
+                            'type': str(flat_ticket.service.type),
+                        }
+                        flat['services'].append(flat_service)
+
+                except ObjectDoesNotExist:
+                    pass
+                response_data.append(flat)
             status_code = status.HTTP_200_OK
         except URLError as e:
-            data = e
+            response_data = e
             status_code = status.HTTP_400_BAD_REQUEST
-
-        return Response(data, status=status_code)
+        response_data = json.dumps(response_data)
+        return Response(response_data, status=status_code)
 
 
 class TicketAPIView(APIView):
@@ -105,7 +125,7 @@ class TicketAPIView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        ticket_id = request.GET['id']
+        ticket_id = request.GET['id'] if hasattr(request, 'id') else ''
         if len(ticket_id) > 0:
             data = Ticket.objects.get(id=ticket_id)
             return Response(data, status=status.HTTP_200_OK)
@@ -125,18 +145,18 @@ class TicketAPIView(APIView):
                 > 0 and len(ticket_speciality) > 0:
             address = Address.objects.get(
                 street_name=ticket_address['street_name'],
-                house_id=ticket_address['street_name'],
-                house_number=ticket_address['street_name'],
-                flat_number=ticket_address['street_name'],
-                flat_id=ticket_address['street_name'])
+                house_id=ticket_address['house_id'],
+                house_number=ticket_address['house_number'],
+                flat_number=ticket_address['flat_number'],
+                flat_id=ticket_address['flat_id'])
             if not hasattr(address, 'id'):
                 try:
                     address = Address.objects.create(
                         street_name=ticket_address['street_name'],
-                        house_id=ticket_address['street_name'],
-                        house_number=ticket_address['street_name'],
-                        flat_number=ticket_address['street_name'],
-                        flat_id=ticket_address['street_name'])
+                        house_id=ticket_address['house_id'],
+                        house_number=ticket_address['house_number'],
+                        flat_number=ticket_address['flat_number'],
+                        flat_id=ticket_address['flat_id'])
                 except ObjectDoesNotExist:
                     return Response({'Incorrect Address'}, status=status.HTTP_400_BAD_REQUEST)
             try:
