@@ -4,8 +4,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from service.serializers import (
     UserSerializer,
-    GroupSerializer,
-    StreetListSerializer
+    GroupSerializer
 )
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
@@ -47,11 +46,14 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 
 class GetStreetListAPIView(APIView):
+    """
+    API endpoint that allows to get list of streets.
+    """
     # Authenticated users only hit this endpoint.
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        url = API_ADDRESS_SERVER_SETTINGS['URL_STREET'] + '?id=' + request.GET['id'] if hasattr(request, 'id') else \
+        url = API_ADDRESS_SERVER_SETTINGS['URL_STREET'] + '?id=' + request.GET['id'] if request.GET.get('id') else \
             API_ADDRESS_SERVER_SETTINGS['URL_STREET']
         try:
             result = requests.get(url, auth=(API_ADDRESS_SERVER_SETTINGS['USERS']['USER1']['LOGIN'],
@@ -66,6 +68,9 @@ class GetStreetListAPIView(APIView):
 
 
 class GetHousesListAPIView(APIView):
+    """
+    API endpoint that allows to get list of houses.
+    """
     # Authenticated users only hit this endpoint.
     permission_classes = (IsAuthenticated,)
 
@@ -84,6 +89,9 @@ class GetHousesListAPIView(APIView):
 
 
 class GetFlatsListAPIView(APIView):
+    """
+    API endpoint that allows users to get list of flats with services.
+    """
     # Authenticated users only hit this endpoint.
     permission_classes = (IsAuthenticated,)
 
@@ -121,19 +129,25 @@ class GetFlatsListAPIView(APIView):
 
 
 class TicketAPIView(APIView):
+    """
+    API endpoint that allows tickets to be viewed and created.
+    """
     # Authenticated users only hit this endpoint.
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        ticket_id = request.GET['id'] if hasattr(request, 'id') else ''
-        if len(ticket_id) > 0:
-            data = Ticket.objects.get(id=ticket_id)
-            return Response(data, status=status.HTTP_200_OK)
+        ticket_id = int(request.GET['id']) if request.GET.get('id') else 0
+        if ticket_id > 0:
+            try:
+                data = Ticket.objects.get(pk=ticket_id)
+                return Response(data, status=status.HTTP_200_OK)
+            except ObjectDoesNotExist:
+                return Response({'Incorrect id'}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response({}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'Please, specify id'}, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
-        ticket_comment = request.POST['comment']
+        ticket_comment = request.POST['comment'] if request.POST.get('comment') else ''
         ticket_address = request.POST['address']
         ticket_service = request.POST['service']
         ticket_status_id = request.POST['status_id']
@@ -162,18 +176,22 @@ class TicketAPIView(APIView):
             try:
                 service = Service.objects.get(name=ticket_service['name'])
             except ObjectDoesNotExist:
-                return Response({'incorrect Service'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'Incorrect Service'}, status=status.HTTP_400_BAD_REQUEST)
             try:
                 engineer = Engineer.objects.get(name=ticket_engineer['name_full'], speciality=ticket_engineer['speciality'])
             except ObjectDoesNotExist:
-                return Response({'incorrect Engineer'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'Incorrect Engineer'}, status=status.HTTP_400_BAD_REQUEST)
             try:
                 speciality = Speciality.objects.get(name=ticket_speciality['name'])
             except ObjectDoesNotExist:
-                return Response({'incorrect Speciality'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'Incorrect Speciality'}, status=status.HTTP_400_BAD_REQUEST)
+            try:
+                time_slot = TimeSlot.objects.get(pk=ticket_time_slot['id'])
+            except ObjectDoesNotExist:
+                return Response({'Incorrect TimeSlot'}, status=status.HTTP_400_BAD_REQUEST)
 
             ticket_id = Ticket.objects.create(comment=ticket_comment, address=address, service=service,
-                                              status_id=ticket_status_id, time_slot=ticket_time_slot,
+                                              status_id=ticket_status_id, time_slot=time_slot,
                                               speciality=speciality, engineer=engineer,
                                               spent_time=ticket_spent_time)
 
