@@ -1,8 +1,22 @@
- FROM python:3
- ENV PYTHONUNBUFFERED 1
- RUN mkdir /code
- WORKDIR /code
- ADD requirements.txt /code/
- RUN pip install -r requirements.txt
- ADD . /code/
+FROM python:latest
+ENV PYTHONUNBUFFERED 1
 
+#ENV C_FORCE_ROOT true # intentionally kept it commented
+
+ENV APP_USER user
+ENV APP_ROOT /src
+
+RUN groupadd -r ${APP_USER} \
+    && useradd -r -m \
+    --home-dir ${APP_ROOT} \
+    -s /usr/sbin/nologin \
+    -g ${APP_USER} ${APP_USER}
+
+WORKDIR ${APP_ROOT}
+
+RUN mkdir /config
+ADD config/requirements.pip /config/
+RUN pip install -r /config/requirements.pip
+
+USER ${APP_USER}
+ADD . ${APP_ROOT}
