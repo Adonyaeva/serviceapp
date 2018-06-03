@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User, Group
+from django.conf import settings
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework import status
@@ -6,17 +7,12 @@ from service.serializers import (
     UserSerializer,
     GroupSerializer
 )
+from django.core.cache.backends.base import DEFAULT_TIMEOUT
+from django.views.decorators.cache import cache_page
 from django.core.exceptions import ObjectDoesNotExist
-from rest_framework.permissions import IsAuthenticated
 from urllib.request import urlopen, URLError
 from serviceapp.settings import API_ADDRESS_SERVER_SETTINGS
 import requests
-from django.http import HttpResponse
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-    TokenVerifyView,
-)
 from rest_framework.response import Response
 from .models import (
     Address,
@@ -27,6 +23,9 @@ from .models import (
     Speciality
 )
 import json
+
+
+CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -49,9 +48,8 @@ class GetStreetListAPIView(APIView):
     """
     API endpoint that allows to get list of streets.
     """
-    # Authenticated users only hit this endpoint.
-    permission_classes = (IsAuthenticated,)
 
+    @cache_page(CACHE_TTL)
     def get(self, request):
         url = API_ADDRESS_SERVER_SETTINGS['URL_STREET'] + '?id=' + request.GET['id'] if request.GET.get('id') else \
             API_ADDRESS_SERVER_SETTINGS['URL_STREET']
@@ -71,9 +69,7 @@ class GetHousesListAPIView(APIView):
     """
     API endpoint that allows to get list of houses.
     """
-    # Authenticated users only hit this endpoint.
-    permission_classes = (IsAuthenticated,)
-
+    @cache_page(CACHE_TTL)
     def get(self, request):
         url = API_ADDRESS_SERVER_SETTINGS['URL_HOUSE'] + '?street=' + request.GET['street_id']
         try:
@@ -92,9 +88,7 @@ class GetFlatsListAPIView(APIView):
     """
     API endpoint that allows users to get list of flats with services.
     """
-    # Authenticated users only hit this endpoint.
-    permission_classes = (IsAuthenticated,)
-
+    @cache_page(CACHE_TTL)
     def get(self, request):
         url = API_ADDRESS_SERVER_SETTINGS['URL_FLAT'] + '?house=' + request.GET['house_id']
         try:
@@ -132,9 +126,7 @@ class TicketAPIView(APIView):
     """
     API endpoint that allows tickets to be viewed and created.
     """
-    # Authenticated users only hit this endpoint.
-    permission_classes = (IsAuthenticated,)
-
+    @cache_page(CACHE_TTL)
     def get(self, request):
         ticket_id = int(request.GET['id']) if request.GET.get('id') else 0
         if ticket_id > 0:
@@ -146,6 +138,7 @@ class TicketAPIView(APIView):
         else:
             return Response({'Please, specify id'}, status=status.HTTP_400_BAD_REQUEST)
 
+    @cache_page(CACHE_TTL)
     def post(self, request):
         ticket_comment = request.POST['comment'] if request.POST.get('comment') else ''
         ticket_address = request.POST['address']
