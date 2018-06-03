@@ -2,7 +2,8 @@ from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 from .models import (
     Service,
-    Speciality
+    Speciality,
+    Ticket
 )
 
 
@@ -32,3 +33,11 @@ class ServiceSerializer(serializers.HyperlinkedModelSerializer):
         depth = 1
         fields = ('name', 'description', 'estimate', 'type')
 
+
+class TicketSerializer(serializers.HyperlinkedModelSerializer):
+    type = SpecialitySerializer()
+
+    class Meta:
+        model = Ticket
+        depth = 1
+        fields = ('comment', 'address', 'service', 'status_id', 'time_slot', 'speciality', 'engineer', 'spent_time')

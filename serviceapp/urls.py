@@ -22,7 +22,6 @@ from rest_framework import generics
 from service.serializers import ServiceSerializer
 from service.models import Service
 
-
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
@@ -34,7 +33,6 @@ from rest_framework_simplejwt.views import (
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^', include(router.urls)),
@@ -48,4 +46,5 @@ urlpatterns = [
     url(r'^api/houses/$', views.GetHousesListAPIView.as_view(), name='get_houses_list'),
     url(r'^api/flats/$', views.GetFlatsListAPIView.as_view(), name='get_flats_list'),
     url(r'^api/ticket/$', views.TicketAPIView.as_view(), name='get_ticket'),
+    url(r'^api/tickets/$', views.TicketsListAPIView.as_view(), name='get_ticket_list'),
 ]

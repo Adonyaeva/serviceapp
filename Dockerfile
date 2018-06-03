@@ -1,8 +1,5 @@
 FROM python:latest
 ENV PYTHONUNBUFFERED 1
-
-#ENV C_FORCE_ROOT true # intentionally kept it commented
-
 ENV APP_USER user
 ENV APP_ROOT /src
 
@@ -15,7 +12,7 @@ RUN groupadd -r ${APP_USER} \
 WORKDIR ${APP_ROOT}
 
 RUN mkdir /config
-ADD config/requirements.pip /config/
+ADD /config/requirements.pip /config/
 RUN pip install -r /config/requirements.pip
 
 USER ${APP_USER}
