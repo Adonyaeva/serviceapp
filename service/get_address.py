@@ -1,14 +1,14 @@
-from django.conf import settings
-import os
-from urllib.request import urlopen, URLError
-import json
 import requests
+from requests.exceptions.RequestException import ConnectionError
+from serviceapp.settings import API_ADDRESS_SERVER_SETTINGS
 
-def send_request():
-    url = API_ADDRESS_SERVER_SETTINGS['URL_FLAT'] + '?house=' + request.GET['house_id']
+
+def send_request(url_type, payload):
+    url = API_ADDRESS_SERVER_SETTINGS[url_type]
     try:
-        result = requests.get(url, auth=(API_ADDRESS_SERVER_SETTINGS['USERS']['USER1']['LOGIN'],
-                                         API_ADDRESS_SERVER_SETTINGS['USERS']['USER1']['PASSWORD']))
-        flats = json.loads(result.content)
-    except URLError as e:
-        return e
+        req = requests.get(url, auth=(API_ADDRESS_SERVER_SETTINGS['USERS']['USER1']['LOGIN'],
+                                         API_ADDRESS_SERVER_SETTINGS['USERS']['USER1']['PASSWORD']), params=payload)
+        result = req.json()
+    except ConnectionError:
+        result = None
+    return result
