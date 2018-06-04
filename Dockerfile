@@ -8,6 +8,3 @@ WORKDIR /app/
 
 # install python dependencies
 RUN pip install -r requirements.pip
-
-# create unprivileged user
-RUN adduser --disabled-password --gecos '' myuser

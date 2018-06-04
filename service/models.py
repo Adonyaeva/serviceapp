@@ -1,6 +1,5 @@
 from django.db import models
-from django.utils import timezone
-import json
+from django.contrib.auth.models import User
 
 
 class Address(models.Model):
@@ -18,22 +17,24 @@ class TimeSlot(models.Model):
     from_date = models.DateTimeField()
     to_date = models.DateTimeField()
     available = models.BooleanField()
+    engineer = models.ForeignKey('service.Engineer', on_delete=models.SET_NULL)
 
     def __str__(self):
         return str(self.from_date) + '_' + str(self.to_date)
 
 
 class Ticket(models.Model):
-    created_time = models.DateTimeField(default=timezone.now)
+    created_time = models.DateTimeField(auto_now_add=True)
     comment = models.TextField()
     address = models.ForeignKey('service.Address', on_delete=models.CASCADE)
     service = models.ForeignKey('service.Service', on_delete=models.CASCADE)
-    status_id = models.IntegerField()
-    status_updated_time = models.DateTimeField()
+    status_id = models.IntegerField(default=0)
+    status_updated_time = models.DateTimeField(auto_now=True)
     time_slot = models.ForeignKey('service.TimeSlot', on_delete=models.DO_NOTHING)
     speciality = models.ForeignKey('service.Speciality', on_delete=models.DO_NOTHING)
     engineer = models.ForeignKey('service.Engineer', on_delete=models.DO_NOTHING)
-    spent_time = models.IntegerField()
+    spent_time = models.IntegerField(default=0)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.address) + '_' + str(self.service) + '_' + str(self.time_slot)
@@ -73,3 +74,10 @@ class Status(models.Model):
     def __str__(self):
         return self.name
 
+
+class TimeSlotToEngineer(models.Model):
+    time_slot_id = models.IntegerField()
+    engineer_id = models.IntegerField()
+
+    def __str__(self):
+        return str(self.time_slot_id) + '_' + str(self.engineer_id)

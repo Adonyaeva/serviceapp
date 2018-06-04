@@ -17,7 +17,7 @@ services:
       context: .
       dockerfile: Dockerfile
     hostname: web
-    command: su -m myuser -c "python manage.py collectstatic --noinput" && su -m myuser -c "python manage.py makemigrations service" && su -m myuser -c "python manage.py migrate" && su -m myuser -c "gunicorn serviceapp.wsgi -b 0.0.0.0:8000"
+    command: bash -c "python3 manage.py makemigrations && python3 manage.py migrate && gunicorn serviceapp.wsgi -b 0.0.0.0:8000"
     volumes:
       - .:/app  # mount current directory inside container
       - ./static:/static
@@ -35,8 +35,6 @@ services:
     restart: always
     hostname: db
     image: postgres:latest
-    volumes:
-      - /private/var/lib/postresql:/src/var/lib/postresql
 
   redis:
     restart: always
@@ -50,7 +48,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: su -m myuser -c "celery worker -A serviceapp.celeryconf -Q default -n default@%h"
+    command: bash -c "celery worker -A serviceapp.celeryconf -Q default -n default@%h"
     volumes:
       - .:/app
     links:
