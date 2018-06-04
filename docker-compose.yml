@@ -35,6 +35,8 @@ services:
     restart: always
     hostname: db
     image: postgres:latest
+    volumes:
+      - /private/var/lib/postresql:/src/var/lib/postresql
 
   redis:
     restart: always
