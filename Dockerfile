@@ -1,19 +1,13 @@
-FROM python:latest
-ENV PYTHONUNBUFFERED 1
-ENV APP_USER user
-ENV APP_ROOT /src
+FROM python:3.5
 
-RUN groupadd -r ${APP_USER} \
-    && useradd -r -m \
-    --home-dir ${APP_ROOT} \
-    -s /usr/sbin/nologin \
-    -g ${APP_USER} ${APP_USER}
+# add requirements.txt to the image
+ADD requirements.pip /app/requirements.pip
 
-WORKDIR ${APP_ROOT}
+# set working directory to /app/
+WORKDIR /app/
 
-RUN mkdir /config
-ADD /config/requirements.pip /config/
-RUN pip install -r /config/requirements.pip
+# install python dependencies
+RUN pip install -r requirements.pip
 
-USER ${APP_USER}
-ADD . ${APP_ROOT}
+# create unprivileged user
+RUN adduser --disabled-password --gecos '' myuser

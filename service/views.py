@@ -10,8 +10,8 @@ from service.serializers import (
 )
 import json
 from .get_address import send_request
-#from django.core.cache.backends.base import DEFAULT_TIMEOUT
-#from django.views.decorators.cache import cache_page
+from django.core.cache.backends.base import DEFAULT_TIMEOUT
+from django.views.decorators.cache import cache_page
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.response import Response
 from .models import (
@@ -22,9 +22,9 @@ from .models import (
     Service,
     Speciality
 )
-from .tasks import send_email
+# from .tasks import send_email
 
-#CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
+CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -48,7 +48,7 @@ class GetStreetListAPIView(APIView):
     API endpoint that allows to get list of streets.
     """
 
- #   @cache_page(CACHE_TTL)
+    @cache_page(CACHE_TTL)
     def get(self, request):
         result = send_request('URL_STREET', {})
         if result:
@@ -64,7 +64,8 @@ class GetHousesListAPIView(APIView):
     """
     API endpoint that allows to get list of houses.
     """
-  #  @cache_page(CACHE_TTL)
+
+    @cache_page(CACHE_TTL)
     def get(self, request):
         result = send_request('URL_HOUSE', {'street': request.GET.get('street_id')})
         if result:
@@ -80,7 +81,8 @@ class GetFlatsListAPIView(APIView):
     """
     API endpoint that allows users to get list of flats with services.
     """
-   # @cache_page(CACHE_TTL)
+
+    @cache_page(CACHE_TTL)
     def get(self, request):
         result = send_request('URL_FLAT', {'house': request.GET.get('house_id')})
         if result:

@@ -1,48 +1,54 @@
 version: '3'
 services:
   nginx:
+    restart: always
     image: nginx:latest
-    container_name: ng01
     ports:
       - "8000:8000"
     volumes:
-      - .:/src
+      - .:/app
       - ./config/nginx:/etc/nginx/conf.d
-      - ./static:/static/
-      - ./media:/media/
     depends_on:
       - web
   web:
-    build: .
-    container_name: dg01
-    command: bash -c "python manage.py collectstatic --noinput && python manage.py makemigrations && python manage.py migrate && gunicorn serviceapp.wsgi -b 0.0.0.0:8000"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    hostname: web
+    command: su -m myuser -c "python manage.py makemigrations service" && su -m myuser -c "python manage.py migrate" && su -m myuser -c "gunicorn serviceapp.wsgi -b 0.0.0.0:8000"
+    volumes:
+      - .:/app  # mount current directory inside container
+#    ports:
+#      - "8000:8000"
+    # set up links so that web knows about db and redis
+    links:
+      - db
+      - redis
     depends_on:
       - db
-    volumes:
-      - .:/src
-      - ./static:/static/
-      - ./media:/media/
-    links:
-      - redis
     expose:
       - "8000"
 
   db:
+    restart: always
+    hostname: db
     image: postgres:latest
-    container_name: ps01
 
   redis:
+    restart: always
     image: redis:latest
-    container_name: rd01
+    hostname: redis
     ports:
      - '6379:6379'
 
-  celery:
-    build: .
-    container_name: cl01
-    command: celery worker --app=app.tasks
+  worker:
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: su -m myuser -c "celery worker -A serviceapp.celeryconf -Q default -n default@%h"
     volumes:
-      - ..:/src
+      - .:/app
     links:
       - db
       - redis
