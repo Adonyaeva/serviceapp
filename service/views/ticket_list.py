@@ -18,8 +18,8 @@ class TicketsListAPIView(APIView):
     """
 
     def get(self, request):
-        ticket_status = request.GET.get('status')
-        ticket_date = request.GET.get('date')
+        ticket_status = request.GET.get('status', '') or ''
+        ticket_date = request.GET.get('date', '') or ''
         filter_params = {}
         if ticket_status:
             filter_params['status'] = ticket_status
@@ -30,4 +30,4 @@ class TicketsListAPIView(APIView):
             data = json.dumps(data)
             return Response(data, status=status.HTTP_200_OK)
         except Ticket.DoesNotExist:
-            return Response({}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'Tickets have not been found'}, status=status.HTTP_400_BAD_REQUEST)

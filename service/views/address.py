@@ -1,9 +1,8 @@
+import json
+import logging
 from rest_framework.views import APIView
 from rest_framework import status
-import json
 from service.get_address import send_request
-
-from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.response import Response
 from service.models import (
     Address,
@@ -22,7 +21,7 @@ class GetStreetListAPIView(APIView):
             data = result
             status_code = status.HTTP_200_OK
         else:
-            data = {}
+            data = {'message': 'Problem has been detected during getting streets'}
             status_code = status.HTTP_400_BAD_REQUEST
         return Response(data, status=status_code)
 
@@ -33,12 +32,12 @@ class GetHousesListAPIView(APIView):
     """
 
     def get(self, request):
-        result = send_request('URL_HOUSE', {'street': request.GET.get('street_id')})
+        result = send_request('URL_HOUSE', {'street': request.GET.get('street_id', '')})
         if result:
             data = result
             status_code = status.HTTP_200_OK
         else:
-            data = {}
+            data = {'message': 'Problem has been detected during getting houses'}
             status_code = status.HTTP_400_BAD_REQUEST
         return Response(data, status=status_code)
 
@@ -68,12 +67,13 @@ class GetFlatsListAPIView(APIView):
                         }
                         flat['services'].append(flat_service)
 
-                except ObjectDoesNotExist:
-                    pass
+                except Address.DoesNotExist:
+                    logging.warning('Ticket with such address hasnt been found.')
                 response_data.append(flat)
+
             status_code = status.HTTP_200_OK
         else:
-            response_data = {}
+            response_data = {'message': 'Problem has been detected during getting flats'}
             status_code = status.HTTP_400_BAD_REQUEST
         response_data = json.dumps(response_data)
         return Response(response_data, status=status_code)

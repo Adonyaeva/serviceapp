@@ -17,7 +17,7 @@ class TimeSlot(models.Model):
     from_date = models.DateTimeField()
     to_date = models.DateTimeField()
     available = models.BooleanField()
-    engineer = models.ForeignKey('service.Engineer', on_delete=models.SET_NULL)
+    # engineer = models.ForeignKey('service.Engineer', on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.from_date) + '_' + str(self.to_date)
@@ -34,7 +34,7 @@ class Ticket(models.Model):
     speciality = models.ForeignKey('service.Speciality', on_delete=models.DO_NOTHING)
     engineer = models.ForeignKey('service.Engineer', on_delete=models.DO_NOTHING)
     spent_time = models.IntegerField(default=0)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.address) + '_' + str(self.service) + '_' + str(self.time_slot)
@@ -74,10 +74,9 @@ class Status(models.Model):
     def __str__(self):
         return self.name
 
-
-class TimeSlotToEngineer(models.Model):
-    time_slot_id = models.IntegerField()
-    engineer_id = models.IntegerField()
-
-    def __str__(self):
-        return str(self.time_slot_id) + '_' + str(self.engineer_id)
+# class TimeSlotToEngineer(models.Model):
+#     time_slot_id = models.IntegerField()
+#     engineer_id = models.IntegerField()
+#
+#     def __str__(self):
+#         return str(self.time_slot_id) + '_' + str(self.engineer_id)

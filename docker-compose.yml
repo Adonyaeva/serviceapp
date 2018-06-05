@@ -17,7 +17,7 @@ services:
       context: .
       dockerfile: Dockerfile
     hostname: web
-    command: bash -c "python3 manage.py makemigrations && python3 manage.py migrate && gunicorn serviceapp.wsgi -b 0.0.0.0:8000"
+    command: bash -c "python3 manage.py collectstatic --noinput && python3 manage.py migrate && gunicorn serviceapp.wsgi -b 0.0.0.0:8000"
     volumes:
       - .:/app  # mount current directory inside container
       - ./static:/static
