@@ -10,7 +10,6 @@ from serviceapp.settings import API_ADDRESS_SERVER_SETTINGS
 CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
 
-@cache_page(CACHE_TTL)
 def send_request(url_type, payload):
     url = API_ADDRESS_SERVER_SETTINGS[url_type]
     try:
@@ -19,4 +18,4 @@ def send_request(url_type, payload):
         result = req.json()
         return result
     except ConnectionError as e:
-        logging.warning(e)
+        return e

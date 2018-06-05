@@ -21,7 +21,7 @@ class GetStreetListAPIView(APIView):
             data = result
             status_code = status.HTTP_200_OK
         else:
-            data = {'message': 'Problem has been detected during getting streets'}
+            data = {'message': 'Problem has been detected during getting streets.'}
             status_code = status.HTTP_400_BAD_REQUEST
         return Response(data, status=status_code)
 
@@ -30,14 +30,13 @@ class GetHousesListAPIView(APIView):
     """
     API endpoint that allows to get list of houses.
     """
-
     def get(self, request):
         result = send_request('URL_HOUSE', {'street': request.GET.get('street_id', '')})
         if result:
             data = result
             status_code = status.HTTP_200_OK
         else:
-            data = {'message': 'Problem has been detected during getting houses'}
+            data = {'message': 'Problem has been detected during getting houses.'}
             status_code = status.HTTP_400_BAD_REQUEST
         return Response(data, status=status_code)
 
@@ -48,9 +47,8 @@ class GetFlatsListAPIView(APIView):
     """
 
     def get(self, request):
-        result = send_request('URL_FLAT', {'house': request.GET.get('house_id')})
-        if result:
-            flats = json.loads(result)
+        flats = send_request('URL_FLAT', {'house': request.GET.get('house_id')})
+        if flats:
             response_data = []
             # Getting services to flats
             for flat in flats:
@@ -73,7 +71,7 @@ class GetFlatsListAPIView(APIView):
 
             status_code = status.HTTP_200_OK
         else:
-            response_data = {'message': 'Problem has been detected during getting flats'}
+            response_data = {'message': 'Problem has been detected during getting flats.'}
             status_code = status.HTTP_400_BAD_REQUEST
         response_data = json.dumps(response_data)
         return Response(response_data, status=status_code)

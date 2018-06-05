@@ -32,12 +32,3 @@ class ServiceSerializer(serializers.HyperlinkedModelSerializer):
         model = Service
         depth = 1
         fields = ('name', 'description', 'estimate', 'type')
-
-
-class TicketSerializer(serializers.HyperlinkedModelSerializer):
-    type = SpecialitySerializer()
-
-    class Meta:
-        model = Ticket
-        depth = 1
-        fields = ('comment', 'address', 'service', 'status_id', 'time_slot', 'speciality', 'engineer', 'spent_time')

@@ -21,17 +21,22 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+from service.views.user import (
+    UserViewSet,
+    GroupViewSet
+)
+from service import urls as service_views
 
 router = routers.DefaultRouter()
-# router.register(r'users', views.UserViewSet)
-# router.register(r'groups', views.GroupViewSet)
+router.register(r'users', UserViewSet)
+router.register(r'groups', GroupViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^', include(router.urls)),
-    url(r'', include('service.urls')),
+    url(r'', include(service_views)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/login/$', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     url(r'^api/refresh/$', TokenRefreshView.as_view(), name='token_refresh'),
