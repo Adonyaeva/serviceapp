@@ -11,15 +11,15 @@ from .models import (
 
 
 class TimeSlotAdmin(ModelAdmin):
-    list_display = ['from_date', 'to_date', 'available', 'engineer']
+    list_display = ['from_date', 'to_date', 'available', 'master']
 
     list_filter = (
-        'engineer',
+        'master',
     )
 
-    # search_fields = (
-    #     'msisdn',
-    # )
+    search_fields = (
+        'master',
+    )
 
 
 admin.site.register(Address)

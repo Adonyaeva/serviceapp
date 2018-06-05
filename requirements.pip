@@ -6,4 +6,4 @@ djangorestframework_simplejwt
 requests
 celery
 redis
-
+Pillow
