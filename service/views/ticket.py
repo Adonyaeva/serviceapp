@@ -1,5 +1,4 @@
-import json
-from django.core import serializers
+from rest_framework.renderers import JSONRenderer
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
@@ -11,6 +10,7 @@ from service.models import (
     Service,
     Speciality
 )
+from service.serializers import TicketSerializer
 from service.tasks import send_status_email
 
 
@@ -23,10 +23,9 @@ class TicketAPIView(APIView):
         ticket_id = request.GET.get('id', '') or ''
         if ticket_id:
             try:
-                data = Ticket.objects.get(id=int(ticket_id))
-                resp_data = serializers.serialize('json', [data])
-                resp_data = json.loads(resp_data)
-                resp_data = json.dumps(resp_data)
+                ticket = Ticket.objects.get(id=int(ticket_id))
+                serialized_ticket = TicketSerializer(ticket)
+                resp_data = JSONRenderer().render(serialized_ticket.data)
                 return Response(resp_data, status=status.HTTP_200_OK)
             except Ticket.DoesNotExist:
                 return Response({'message': 'No ticket with such id.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -68,7 +67,7 @@ class TicketAPIView(APIView):
         try:
             ticket = Ticket.objects.create(
                 comment=ticket_comment,
-                address=address[0],
+                address=address,
                 service=service,
                 status_id=ticket_status_id,
                 time_slot=time_slot,
@@ -76,10 +75,8 @@ class TicketAPIView(APIView):
                 engineer=engineer,
                 spent_time=ticket_spent_time
             )
-
-            resp_data = serializers.serialize('json', [ticket])
-            resp_data = json.loads(resp_data)
-            resp_data = json.dumps(resp_data)
+            serialized_ticket = TicketSerializer(ticket)
+            resp_data = JSONRenderer().render(serialized_ticket.data)
             status_code = status.HTTP_200_OK
         except:
             resp_data = {'message': 'Can not create ticket'}
@@ -125,11 +122,10 @@ class TicketAPIView(APIView):
             ticket.spent_time = ticket_spent_time
         try:
             ticket.save()
-            resp_data = serializers.serialize('json', [ticket])
-            resp_data = json.loads(resp_data)
-            resp_data = json.dumps(resp_data)
+            serialized_ticket = TicketSerializer(ticket)
+            resp_data = JSONRenderer().render(serialized_ticket.data)
             status_code = status.HTTP_200_OK
         except:
-            resp_data = {'message': 'Can not create ticket'}
+            resp_data = {'message': 'Can not changed the ticket'}
             status_code = status.HTTP_400_BAD_REQUEST
         return Response(resp_data, status=status_code)

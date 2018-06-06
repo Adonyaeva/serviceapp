@@ -5,7 +5,7 @@ from django.conf import settings
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "serviceapp.settings")
 
-app = Celery('serviceapp', broker='redis://redis:6379/0')
+app = Celery('service', broker='redis://redis:6379/0')
 
 CELERY_TIMEZONE = 'UTC'
 

@@ -1,6 +1,6 @@
 import logging
 from django.conf import settings
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import send_mail
 from serviceapp.celeryconf import app
 from service.models import Ticket
 
@@ -13,7 +13,16 @@ def send_status_email(ticket_id):
         recipient_list = [ticket.user.email, from_address]
         subject = 'Статус заявки был изменен'
         body = 'Изменен статус заявки ' + str(ticket.id)
-        msg = EmailMultiAlternatives(subject, body, from_address, recipient_list)
-        msg.send()
+        try:
+            send_mail(
+                subject,
+                body,
+                from_address,
+                recipient_list,
+                fail_silently=False,
+            )
+        except:
+            logging.warning('Email about changed status can not been sent.')
     except Ticket.DoesNotExist:
-        logging.warning('Problem with sending of changed status of ticket id ' + ticket_id)
+        logging.warning('Problem with sending email of changed status of ticket: no ticket with such id '
+                        + str(ticket_id))
