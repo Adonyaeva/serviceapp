@@ -61,6 +61,8 @@ class TicketAPIView(APIView):
             return Response({'message': 'Incorrect Speciality'}, status=status.HTTP_400_BAD_REQUEST)
         try:
             time_slot = TimeSlot.objects.get(id=ticket_time_slot['id'])
+            time_slot.available = False
+            time_slot.save()
         except TimeSlot.DoesNotExist:
             return Response({'message': 'Incorrect TimeSlot'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -73,7 +75,8 @@ class TicketAPIView(APIView):
                 time_slot=time_slot,
                 speciality=speciality,
                 engineer=engineer,
-                spent_time=ticket_spent_time
+                spent_time=ticket_spent_time,
+                user=request.user
             )
             serialized_ticket = TicketSerializer(ticket)
             resp_data = JSONRenderer().render(serialized_ticket.data)
@@ -108,6 +111,8 @@ class TicketAPIView(APIView):
             ticket.service = service
         if ticket_time_slot:
             time_slot = TimeSlot.objects.get(id=ticket_time_slot['id'])
+            time_slot.available = False
+            time_slot.save()
             ticket.time_slot = time_slot
         if ticket_status_id:
             ticket.status_id = ticket_status_id
