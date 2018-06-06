@@ -6,13 +6,11 @@ from django.contrib.auth.models import User
 
 class ServiceTestCase(TransactionTestCase):
     def setUp(self):
-        User.objects.create(username="user1", email="user1@test.com", password="12345678")
-        User.objects.create(username="user2", email="user2@test.com", password="12345678")
+        User.objects.create_user(username="user1", email="user1@test.com", password="12345678")
+        User.objects.create_user(username="user2", email="user2@test.com", password="12345678")
 
     def test_jwt_auth(self):
         user1 = User.objects.get(username='user1')
-        user1.is_active = True
-        user1.save()
         data = '{"username": "' + user1.username + '", "password": "' + user1.password + '"}'
 
         response = self.client.post(

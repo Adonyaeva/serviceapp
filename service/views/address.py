@@ -2,7 +2,7 @@ import json
 import logging
 from rest_framework.views import APIView
 from rest_framework import status
-from service.get_address import send_request
+from service.utils.get_address import send_request
 from rest_framework.response import Response
 from service.models import (
     Address,
