@@ -1,15 +1,9 @@
-import json
 from rest_framework.views import APIView
+from rest_framework.renderers import JSONRenderer
 from rest_framework import status
 from rest_framework.response import Response
-from service.models import (
-    Address,
-    TimeSlot,
-    Ticket,
-    Engineer,
-    Service,
-    Speciality
-)
+from service.serializers import TicketSerializer
+from service.models import Ticket
 
 
 class TicketsListAPIView(APIView):
@@ -18,16 +12,23 @@ class TicketsListAPIView(APIView):
     """
 
     def get(self, request):
+        params = {}
         ticket_status = request.GET.get('status', '') or ''
-        ticket_date = request.GET.get('date', '') or ''
-        filter_params = {}
         if ticket_status:
-            filter_params['status'] = ticket_status
+            params['status_id'] = ticket_status
+        ticket_date = request.GET.get('date', '') or ''
         if ticket_date:
-            filter_params['time_slot'] = ticket_date
+            params['time_slot__from_date__lte'] = ticket_date
+            params['time_slot__to_date__gte'] = ticket_date
+        ticket_house = request.GET.get('house', '') or ''
+        if ticket_house:
+            params['address__house_id'] = ticket_house
+
         try:
-            data = Ticket.objects.filter(filter_params)
-            data = json.dumps(data)
-            return Response(data, status=status.HTTP_200_OK)
+            data = Ticket.objects.filter(**params)
+
+            serialized_tickets = TicketSerializer(data, many=True)
+            resp_data = JSONRenderer().render(serialized_tickets.data)
+            return Response(resp_data, status=status.HTTP_200_OK)
         except Ticket.DoesNotExist:
             return Response({'message': 'Tickets have not been found'}, status=status.HTTP_400_BAD_REQUEST)
