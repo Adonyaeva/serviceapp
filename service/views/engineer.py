@@ -17,13 +17,15 @@ class EngineerTimeAPIView(APIView):
     def get(self, request):
         req_date = request.GET.get('date')
         if req_date:
-            time_slot_date = datetime.strptime(req_date, "%Y-%m-%dT%H:%M:%S.%fZ").date()
+            time_slot_date = datetime.strptime(req_date, "%Y-%m-%dT%H:%M:%S")
             try:
-                data = TimeSlot.objects\
-                    .filter(from_date__lte=time_slot_date)\
-                    .filter(to_date__gte=time_slot_date)
+                data = TimeSlot.objects.filter(
+                    from_date__lte=time_slot_date,
+                    to_date__gte=time_slot_date,
+                    available=True,
+                )
 
-                serialized_timeslots = TimeSlotSerializer(data)
+                serialized_timeslots = TimeSlotSerializer(data, many=True)
                 resp_data = JSONRenderer().render(serialized_timeslots.data)
                 return Response(resp_data, status=status.HTTP_200_OK)
             except TimeSlot.DoesNotExist:

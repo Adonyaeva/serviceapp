@@ -43,17 +43,20 @@ class AddressSerializer(serializers.ModelSerializer):
         fields = ('street_name', 'house_id', 'house_number', 'flat_id', 'flat_number')
 
 
-class TimeSlotSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TimeSlot
-        fields = ('from_date', 'to_date', 'available')
-
-
 class EngineerSerializer(serializers.ModelSerializer):
     speciality = SpecialitySerializer()
+
     class Meta:
         model = Engineer
         fields = ('name_full', 'name_short', 'speciality')
+
+
+class TimeSlotSerializer(serializers.ModelSerializer):
+    master = EngineerSerializer()
+
+    class Meta:
+        model = TimeSlot
+        fields = ('from_date', 'to_date', 'available', 'master')
 
 
 class TicketSerializer(serializers.HyperlinkedModelSerializer):
