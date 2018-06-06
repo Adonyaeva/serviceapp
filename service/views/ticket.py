@@ -5,13 +5,13 @@ from rest_framework import status
 from rest_framework.response import Response
 from service.utils.get_or_create_adress import get_or_create_adress
 from service.models import (
-    Address,
     TimeSlot,
     Ticket,
     Engineer,
     Service,
     Speciality
 )
+from service.tasks import send_status_email
 
 
 class TicketAPIView(APIView):
@@ -109,11 +109,12 @@ class TicketAPIView(APIView):
         if ticket_service:
             service = Service.objects.get(id=ticket_service['id'])
             ticket.service = service
-        if ticket_status_id:
-            ticket.status_id = ticket_status_id
         if ticket_time_slot:
             time_slot = TimeSlot.objects.get(id=ticket_time_slot['id'])
             ticket.time_slot = time_slot
+        if ticket_status_id:
+            ticket.status_id = ticket_status_id
+            send_status_email.delay(ticket_id)
         if ticket_speciality:
             speciality = Speciality.objects.get(id=ticket_speciality['id'])
             ticket.speciality = speciality

@@ -16,7 +16,7 @@ class Address(models.Model):
 class TimeSlot(models.Model):
     from_date = models.DateTimeField()
     to_date = models.DateTimeField()
-    available = models.BooleanField()
+    available = models.BooleanField(default=True)
     master = models.ForeignKey('service.Engineer', on_delete=models.CASCADE)
 
     def __str__(self):

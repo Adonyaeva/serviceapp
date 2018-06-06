@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'service',
     'rest_framework',
-    # 'celery',
+    'celery',
 ]
 
 MIDDLEWARE = [
@@ -213,3 +213,11 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERYD_HIJACK_ROOT_LOGGER = False
 CELERYD_PREFETCH_MULTIPLIER = 1
 CELERYD_MAX_TASKS_PER_CHILD = 1000
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'jevis007@gmail.com'
+EMAIL_HOST_PASSWORD = 'agentsmith007'
+DEFAULT_FROM_EMAIL = 'jevis007@gmail.com'
+DEFAULT_TO_EMAIL = 'jevis007@gmail.com'
