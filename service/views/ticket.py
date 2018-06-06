@@ -1,3 +1,4 @@
+from django.utils.timezone import now
 from rest_framework.renderers import JSONRenderer
 from rest_framework.views import APIView
 from rest_framework import status
@@ -25,7 +26,7 @@ class TicketAPIView(APIView):
             try:
                 ticket = Ticket.objects.get(id=int(ticket_id))
                 serialized_ticket = TicketSerializer(ticket)
-                resp_data = JSONRenderer().render(serialized_ticket.data)
+                resp_data = JSONRenderer().render({'ticket': serialized_ticket.data})
                 return Response(resp_data, status=status.HTTP_200_OK)
             except Ticket.DoesNotExist:
                 return Response({'message': 'No ticket with such id.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -79,7 +80,7 @@ class TicketAPIView(APIView):
                 user=request.user
             )
             serialized_ticket = TicketSerializer(ticket)
-            resp_data = JSONRenderer().render(serialized_ticket.data)
+            resp_data = JSONRenderer().render({'ticket': serialized_ticket.data})
             status_code = status.HTTP_200_OK
         except:
             resp_data = {'message': 'Can not create ticket'}
@@ -117,6 +118,8 @@ class TicketAPIView(APIView):
         if ticket_status_id:
             ticket.status_id = ticket_status_id
             send_status_email.delay(ticket_id)
+            if int(ticket_status_id) == 3:
+                ticket.spent_time = (now() - ticket.created_time).seconds
         if ticket_speciality:
             speciality = Speciality.objects.get(id=ticket_speciality['id'])
             ticket.speciality = speciality
@@ -128,7 +131,7 @@ class TicketAPIView(APIView):
         try:
             ticket.save()
             serialized_ticket = TicketSerializer(ticket)
-            resp_data = JSONRenderer().render(serialized_ticket.data)
+            resp_data = JSONRenderer().render({'ticket': serialized_ticket.data})
             status_code = status.HTTP_200_OK
         except:
             resp_data = {'message': 'Can not changed the ticket'}

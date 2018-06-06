@@ -17,7 +17,7 @@ class TimeSlot(models.Model):
     from_date = models.DateTimeField()
     to_date = models.DateTimeField()
     available = models.BooleanField(default=True)
-    master = models.ForeignKey('service.Engineer', on_delete=models.CASCADE)
+    master = models.ForeignKey('service.Engineer', on_delete=models.CASCADE, related_name='time_slots')
 
     def __str__(self):
         return str(self.from_date) + '_' + str(self.to_date)
@@ -73,10 +73,3 @@ class Status(models.Model):
 
     def __str__(self):
         return self.name
-
-# class TimeSlotToEngineer(models.Model):
-#     time_slot_id = models.IntegerField()
-#     engineer_id = models.IntegerField()
-#
-#     def __str__(self):
-#         return str(self.time_slot_id) + '_' + str(self.engineer_id)

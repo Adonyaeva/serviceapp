@@ -18,7 +18,7 @@ class GetStreetListAPIView(APIView):
     def get(self, request):
         result = send_request('URL_STREET', {})
         if result:
-            data = result
+            data = {'streets': result}
             status_code = status.HTTP_200_OK
         else:
             data = {'message': 'Problem has been detected during getting streets.'}
@@ -33,7 +33,7 @@ class GetHousesListAPIView(APIView):
     def get(self, request):
         result = send_request('URL_HOUSE', {'street': request.GET.get('street_id', '')})
         if result:
-            data = result
+            data = {'houses': result}
             status_code = status.HTTP_200_OK
         else:
             data = {'message': 'Problem has been detected during getting houses.'}
@@ -68,7 +68,7 @@ class GetFlatsListAPIView(APIView):
                 except Address.DoesNotExist:
                     logging.warning('Ticket with such address hasnt been found.')
                 response_data.append(flat)
-
+            response_data = {'flats': response_data}
             status_code = status.HTTP_200_OK
         else:
             response_data = {'message': 'Problem has been detected during getting flats.'}

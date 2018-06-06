@@ -34,13 +34,13 @@ class ServiceSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Service
         depth = 1
-        fields = ('name', 'description', 'estimate', 'type')
+        fields = ('id', 'name', 'description', 'estimate', 'type')
 
 
 class AddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = Address
-        fields = ('street_name', 'house_id', 'house_number', 'flat_id', 'flat_number')
+        fields = ('id', 'street_name', 'house_id', 'house_number', 'flat_id', 'flat_number')
 
 
 class EngineerSerializer(serializers.ModelSerializer):
@@ -48,7 +48,7 @@ class EngineerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Engineer
-        fields = ('name_full', 'name_short', 'speciality')
+        fields = ('id', 'name_full', 'name_short', 'speciality')
 
 
 class TimeSlotSerializer(serializers.ModelSerializer):
@@ -56,7 +56,7 @@ class TimeSlotSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TimeSlot
-        fields = ('from_date', 'to_date', 'available', 'master')
+        fields = ('id', 'from_date', 'to_date', 'available', 'master')
 
 
 class TicketSerializer(serializers.HyperlinkedModelSerializer):
@@ -69,5 +69,5 @@ class TicketSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Ticket
         depth = 1
-        fields = ('created_time', 'comment', 'address', 'service', 'status_id', 'status_updated_time', 'time_slot',
+        fields = ('id', 'created_time', 'comment', 'address', 'service', 'status_id', 'status_updated_time', 'time_slot',
                   'speciality', 'spent_time', 'engineer')
